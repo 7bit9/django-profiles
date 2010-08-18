@@ -289,7 +289,8 @@ def profile_detail(request, username, public_profile_field=None,
                               context_instance=context)
 
 def profile_list(request, public_profile_field=None,
-                 template_name='profiles/profile_list.html', **kwargs):
+                 template_name='profiles/profile_list.html',
+                 extra_filter=None, **kwargs):
     """
     A list of user profiles.
     
@@ -315,6 +316,11 @@ def profile_list(request, public_profile_field=None,
         not specified, this will default to
         :template:`profiles/profile_list.html`.
 
+    ``extra_filter``
+        Optional callable which will be called with a ``QuerySet`` (after
+        ``public_profile_field`` is applied) and its result will be used for
+        rendering the template.
+
     Additionally, all arguments accepted by the
     :view:`django.views.generic.list_detail.object_list` generic view
     will be accepted here, and applied in the same fashion, with one
@@ -337,6 +343,8 @@ def profile_list(request, public_profile_field=None,
     queryset = profile_model._default_manager.all()
     if public_profile_field is not None:
         queryset = queryset.filter(**{ public_profile_field: True })
+    if callable(extra_filter):
+        queryset = extra_filter(queryset)
     kwargs['queryset'] = queryset
     return object_list(request, template_name=template_name, **kwargs)
 

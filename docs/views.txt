@@ -195,6 +195,11 @@ be raised.
     not specified, this will default to
     :template:`profiles/profile_list.html`.
 
+``extra_filter``
+    Optional callable which will be called with a ``QuerySet`` (after
+    ``public_profile_field`` is applied) and its result will be used for
+    rendering the template.
+
 Additionally, all arguments accepted by the
 :view:`django.views.generic.list_detail.object_list` generic view will
 be accepted here, and applied in the same fashion, with one exception:
