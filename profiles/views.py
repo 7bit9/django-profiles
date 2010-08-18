@@ -258,6 +258,9 @@ def profile_detail(request, username, public_profile_field=None,
         The user's profile, or ``None`` if the user's profile is not
         publicly viewable (see the description of
         ``public_profile_field`` above).
+
+    ``is_your_profile``
+        Boolean variable indicating your are viewing your own profile.
     
     **Template:**
     
@@ -273,7 +276,7 @@ def profile_detail(request, username, public_profile_field=None,
     if public_profile_field is not None and \
        not getattr(profile_obj, public_profile_field):
         profile_obj = None
-    
+
     if extra_context is None:
         extra_context = {}
     context = RequestContext(request)
@@ -281,7 +284,8 @@ def profile_detail(request, username, public_profile_field=None,
         context[key] = callable(value) and value() or value
     
     return render_to_response(template_name,
-                              { 'profile': profile_obj },
+                              { 'profile': profile_obj,
+                                'is_your_profile': _is_your_profile(profile_obj, request.user) },
                               context_instance=context)
 
 def profile_list(request, public_profile_field=None,
@@ -335,3 +339,10 @@ def profile_list(request, public_profile_field=None,
         queryset = queryset.filter(**{ public_profile_field: True })
     kwargs['queryset'] = queryset
     return object_list(request, template_name=template_name, **kwargs)
+
+def _is_your_profile(profile_obj, user):
+    if not profile_obj or user.is_anonymous():
+        return False
+
+    return profile_obj.user == user
+

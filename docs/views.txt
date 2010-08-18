@@ -161,6 +161,9 @@ If the user has not yet created a profile, ``Http404`` will be raised.
     publicly viewable (see the description of ``public_profile_field``
     above).
     
+``is_your_profile``
+    Boolean variable indicating your are viewing your own profile.
+    
 **Template:**
 
 ``template_name`` keyword argument or
